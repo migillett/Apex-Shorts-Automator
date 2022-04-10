@@ -1,10 +1,22 @@
+#!/usr/bin/python3
+
 from os import listdir, path, mkdir
+from sys import exit
 from moviepy.editor import *
+import argparse
 
 ### INSTRUCTIONS ###
 # By default, the program will pull all video files from a folder titled "ingest" in the current directory
 # files imported must be videos (mov, mp4, etc)
 # you can also define your own file locations below by changing the ingest_dir and export_dir variables.
+
+parser = argparse.ArgumentParser(description='Automate the editing of Apex Legends highlights in 9/16 format')
+parser.add_argument('-i', '--ingest', dest='ingest', type=str, nargs=1, help="Where to pull video files from")
+parser.add_argument('-e', '--export', dest='export', type=str, nargs=1, help="Where to save exported videos")
+parser.add_argument('-o', '--overwrite', action='store_true', dest='overwrite', default=False, help="Overwrite existing files")
+parser.add_argument('-w', '--watermark', dest='watermark', type=str, nargs=1, help="Filepath for logo/watermark file")
+args = parser.parse_args()
+
 
 class ApexAutoCropper:
     def __init__(self, ingest_dir='./ingest', export_dir='./exports', single_file=False, overwrite=False, logo_file='./watermark.png') -> None:
@@ -17,6 +29,8 @@ class ApexAutoCropper:
         self.watermark = path.normpath(logo_file)
 
         self.overwrite = overwrite
+        print(f'Overwrite is set to {self.overwrite}')
+
         self.ingest = path.normpath(ingest_dir)
         self.export = path.normpath(export_dir)
 
@@ -98,6 +112,23 @@ class ApexAutoCropper:
         final.write_videofile(self.export_path)
 
 
-### CONFIG GOES HERE ###
 if __name__ == '__main__':
-    ApexAutoCropper()
+    try:
+        ingest = args.ingest[0]
+    except TypeError:
+        ingest = str(input('\nInput ingest directory: '))
+
+    try:
+        export = args.export[0]
+    except TypeError:
+        export = int(input('\nInput export directory: '))
+
+    try:
+        print(args.overwrite)
+        ApexAutoCropper(
+            ingest_dir=ingest,
+            export_dir=export,
+            overwrite=args.overwrite
+        )
+    except Exception as e:
+        exit(e)
