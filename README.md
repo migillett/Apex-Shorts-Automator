@@ -13,8 +13,7 @@ Here are some examples of how the input and output formats of the program. The f
 ![before](https://user-images.githubusercontent.com/51103663/162653389-00a93c8a-07b9-44ae-852b-9243ee56e7dd.jpg)
 
 ### After
-![after](https://user-images.githubusercontent.com/51103663/162653371-c478a6bf-277a-43d0-9de3-5cbf5e45d15b.jpg)
-
+![after](https://user-images.githubusercontent.com/51103663/162654349-2ea55cf4-d1ec-4352-9116-41e747c81cd2.jpg)
 
 ## How to Use
 You can import this program into another script or run it directly from the command line. For example:
