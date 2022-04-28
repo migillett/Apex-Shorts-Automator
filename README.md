@@ -18,7 +18,13 @@ Here are some examples of how the input and output formats of the program. The f
 ## How to Use
 You can import this program into another script or run it directly from the command line. For example:
 
+`python3 ./apex_shorts.py -s './ingest/test.mp4' -d './exports'`
+
+If you wanted to trim the origional file to start at 3 seconds and end at 10 seconds, you type:
+
 `python3 ./apex_shorts.py -s './ingest/test.mp4' -d './exports' -r -i 3 -o 10`
+
+Here are all of the flags that are available for use:
 
 `-s` or `--source`    The source directory (where all of our game recordings are)
 
