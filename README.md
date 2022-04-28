@@ -18,13 +18,17 @@ Here are some examples of how the input and output formats of the program. The f
 ## How to Use
 You can import this program into another script or run it directly from the command line. For example:
 
-`python3 ./apex_shorts.py -s 'E:\OBS Recordings' -e './exports'`
+`python3 ./apex_shorts.py -s './ingest/test.mp4' -d './exports' -r -i 3 -o 10`
 
 `-s` or `--source`    The source directory (where all of our game recordings are)
 
-`-e` or `--export`    The export directory (where you want to export the edited files)
+`-d` or `--destination`    The export directory (where you want to export the edited files)
 
-`-o` or `--overwrite` Allows you to overwrite files in case you encounter any exporting errors
+`-i` or `--inpoint`     When you want the video to start (in seconds)
+
+`-o` or `--outpoint`    When you want the video to end (in seconds)
+
+`-r` or `--overwrite` Allows you to overwrite files in case you encounter any exporting errors
 
 `-w` or `--watermark` Allows you to specify a specific filepath for your watermark
 
@@ -32,6 +36,3 @@ You can import this program into another script or run it directly from the comm
 For best results, use a 500 x 500 pixel transparent PNG for your watermark.
 
 This program has not been tested using footage that is not 1920x1080. If you use alternative aspect ratios, your mileage may vary.
-
-## Future Plans
-I would like to implement some sort of in and out point designation for the edited clips. Currently there is none.
