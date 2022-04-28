@@ -121,7 +121,7 @@ if __name__ == '__main__':
     try:
         export = args.export[0]
     except TypeError:
-        export = int(input('\nInput export directory: '))
+        export = str(input('\nInput export directory: '))
 
     try:
         print(args.overwrite)
