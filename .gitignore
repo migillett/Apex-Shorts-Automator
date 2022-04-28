@@ -158,3 +158,4 @@ cython_debug/
 /venv
 /exports
 watermark.png
+.DS_Store
