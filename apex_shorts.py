@@ -79,7 +79,7 @@ class ApexAutoCropper:
             # use a copy of the clip imported above
             hb_crop = clip
             # mask it using png
-            hb_mask = ImageClip('./mask.png', ismask=True).set_duration(clip.duration).resize(height=h).set_pos((0, 0))
+            hb_mask = ImageClip('./mask.png', ismask=True).set_duration(clip.duration).resize(height=h, width=w).set_pos((0, 0))
             hb_crop.mask = hb_mask
             # crop it to make it easier to move around. Calculations based on 1920x1080 recording (x_pos / 1920) or (y_pos / 1080)
             hb_crop.fx(
@@ -91,6 +91,9 @@ class ApexAutoCropper:
             )
             # mute duplicate track
             hb_crop.volumex(0)
+
+            new_hbcrop = hb_crop
+            print(new_hbcrop.size)
 
             # if watermark image exists, include in export
             if path.exists(self.watermark):
@@ -105,11 +108,11 @@ class ApexAutoCropper:
                     .margin(right=margins, bottom=margins, opacity=0)
                     .set_pos(("right", "bottom")))
 
-                final = CompositeVideoClip([cropped_clip, logo, hb_crop.set_position((59, -802))])
+                final = CompositeVideoClip([cropped_clip, logo, hb_crop.set_position((50, -1010)).resize(1.10)])
 
             # otherwise, just export video with cropped health bar
             else:
-                final = CompositeVideoClip([cropped_clip, hb_crop.set_position((59, -802))])
+                final = CompositeVideoClip([cropped_clip, hb_crop.set_position((50, -1010).resize(1.10))])
 
             # and export it
             final.write_videofile(self.export_path)
