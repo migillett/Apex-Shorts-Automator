@@ -85,22 +85,13 @@ class ApexAutoCropper:
                 if self.stretch: # for 16x10 apsect ratios recorded at 1920x1080 (has black bars on side)
                     mask_path = path.join(self.mask_dir, '1080p_16x10_v2.png')
                     position = (-40, -1020)
-                    x1 = 48
-                    x2 = 394
-                    y1 = 964
-                    y2 = 1034
  
                 else: # for 1080p 16x9 videos
                     mask_path = path.join(self.mask_dir, '1080p_16x9.png')
                     position = (50, -1010)
-                    x1 = 30
-                    x2 = 247
-                    y1 = 1695
-                    y2 = 1830
 
                 hb_mask = ImageClip(mask_path, ismask=True).set_duration(clip.duration).resize(height=h, width=w).set_pos((0, 0))
                 hb_crop.mask = hb_mask
-                hb_crop.fx(vfx.crop,x1, y1, x2, y2) # crop the clip to fit health bar mask
                 hb_crop.volumex(0) # mute duplicate track
 
                 comp_clip.append(hb_crop.set_position(position).resize(1.10))
@@ -127,6 +118,7 @@ class ApexAutoCropper:
 
             # close the files to clear memory
             final.close()
+            clip.close()
 
 
 if __name__ == '__main__':

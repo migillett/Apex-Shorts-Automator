@@ -45,4 +45,4 @@ Here are all of the flags that are available for use:
 ## Notes
 For best results, use a 500 x 500 pixel transparent PNG for your watermark.
 
-This program has not been tested using footage that is not 1920x1080. If you use alternative aspect ratios, your mileage may vary.
+This program has not been tested using footage that is not 1920x1080. If you use alternative aspect ratios, your mileage may vary. I've added support for 16x10 aspect ratios in the last update, but it assumes it's still 1920x1080 with black bars on the side.
