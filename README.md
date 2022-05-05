@@ -36,7 +36,11 @@ Here are all of the flags that are available for use:
 
 `-r` or `--overwrite` Allows you to overwrite files in case you encounter any exporting errors
 
-`-w` or `--watermark` Allows you to specify a specific filepath for your watermark
+`-w` or `--watermark` Allows you to specify a specific filepath for your watermark. You'll need to include the filepath after this flag. For example: `-w 'path/to/file.png'`
+
+`-b` or `--hidehealthbar` Allows you to disable the healthbar overlay
+
+`--stretch` Sets the healthbar overlay to work with 16x10 aspect ratio recordings.
 
 ## Notes
 For best results, use a 500 x 500 pixel transparent PNG for your watermark.

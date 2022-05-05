@@ -11,7 +11,7 @@ import argparse
 # you can also define your own file locations below by changing the ingest_dir and export_dir variables.
 
 class ApexAutoCropper:
-    def __init__(self, source='./ingest', destination='./exports', in_point=0, out_point=0, overwrite=False, hb_enable=True, logo_file='./watermark.png') -> None:
+    def __init__(self, source='./ingest', destination='./exports', stretch=False, in_point=0, out_point=0, overwrite=False, hb_enable=True, logo_file='./watermark.png') -> None:
         # source = where to pull files from
         # destination = where to save the final files
         # single_file = only for testing. helps save time from exporting all files in a folder
@@ -21,6 +21,7 @@ class ApexAutoCropper:
         self.watermark = path.normpath(logo_file)
         self.overwrite = overwrite
         self.hb_enable = hb_enable
+        self.stretch = stretch
 
         self.in_point = in_point
         self.out_point = out_point
@@ -31,6 +32,8 @@ class ApexAutoCropper:
         export_normalized = path.normpath(destination)
         if not path.exists(export_normalized):
             mkdir(export_normalized)
+
+        self.mask_dir = path.join(path.dirname(__file__), 'masks')
 
         if path.isdir(source): # if the source is a directory, loop through files in that folder
 
@@ -67,36 +70,40 @@ class ApexAutoCropper:
             # get size of the clip (normally 1920x1080)
             w, h = clip.size
 
-            # If it's not the same size, scale it up/down
-            if w != 1920 and h != 1080:
-                print(f"\nWARNING: Your video dimensions are {w}x{h}. For best results, use clips that are 1920x1080.\n")
-                  
-            # keep aspect ratio to 9x16, but scale appropriately
+            # determine the new width of video to fit 9x16 screens
             cropped_w = round((h*9)/16)
 
             # crop the clip based on the calculations above
             cropped_clip = clip.fx(vfx.crop, x_center=w/2 , y_center=h/2, width=cropped_w, height=h)
-
             comp_clip = [cropped_clip]
 
             # if hb_enable is true, include masked health bar
             if self.hb_enable:
                 # use a copy of the clip imported above
                 hb_crop = clip
-                # mask it using png
-                hb_mask = ImageClip('./mask.png', ismask=True).set_duration(clip.duration).resize(height=h, width=w).set_pos((0, 0))
+              
+                if self.stretch: # for 16x10 apsect ratios recorded at 1920x1080 (has black bars on side)
+                    mask_path = path.join(self.mask_dir, '1080p_16x10_v2.png')
+                    position = (-40, -1020)
+                    x1 = 48
+                    x2 = 394
+                    y1 = 964
+                    y2 = 1034
+ 
+                else: # for 1080p 16x9 videos
+                    mask_path = path.join(self.mask_dir, '1080p_16x9.png')
+                    position = (50, -1010)
+                    x1 = 30
+                    x2 = 247
+                    y1 = 1695
+                    y2 = 1830
+
+                hb_mask = ImageClip(mask_path, ismask=True).set_duration(clip.duration).resize(height=h, width=w).set_pos((0, 0))
                 hb_crop.mask = hb_mask
-                # crop it to make it easier to move around. Calculations based on 1920x1080 recording (x_pos / 1920) or (y_pos / 1080)
-                hb_crop.fx(
-                    vfx.crop,
-                    x1=round(w*0.028125),
-                    y1=round(h*0.883333),
-                    x2=round(w*0.228125),
-                    y2=round(h*0.952778)
-                )
-                # mute duplicate track
-                hb_crop.volumex(0)
-                comp_clip.append(hb_crop.set_position((50, -1010)).resize(1.10))
+                hb_crop.fx(vfx.crop,x1, y1, x2, y2) # crop the clip to fit health bar mask
+                hb_crop.volumex(0) # mute duplicate track
+
+                comp_clip.append(hb_crop.set_position(position).resize(1.10))
 
             # if watermark image exists, include in export
             if path.exists(self.watermark):
@@ -116,7 +123,7 @@ class ApexAutoCropper:
             final = CompositeVideoClip(comp_clip)
 
             # and export it
-            final.write_videofile(self.export_path)
+            final.write_videofile(self.export_path, codec='mpeg4', audio_codec='aac', remove_temp=True, preset='placebo')
 
             # close the files to clear memory
             final.close()
@@ -134,14 +141,20 @@ if __name__ == '__main__':
     parser.add_argument('-r', '--overwrite', action='store_true', dest='overwrite', default=False, help="Overwrite existing files")
     parser.add_argument('-b', '--hidehealthbar', action='store_false', dest='hb_enable', default=True, help="Disables Health Bar overlay")
     parser.add_argument('-w', '--watermark', dest='watermark', type=str, nargs=1, help="Filepath for logo/watermark file")
+    parser.add_argument('--stretch', dest='stretch', action='store_true', default=False, help="Enables 16x10 aspect ratios")
 
     args = parser.parse_args()
 
-    ApexAutoCropper(
-        source=args.source,
-        destination=args.destination,
-        in_point=args.inpoint,
-        out_point=args.outpoint,
-        overwrite=args.overwrite,
-        hb_enable=args.hb_enable
-    )
+    try:
+        ApexAutoCropper(
+            source=args.source,
+            destination=args.destination,
+            in_point=args.inpoint,
+            out_point=args.outpoint,
+            stretch=args.stretch,
+            overwrite=args.overwrite,
+            hb_enable=args.hb_enable
+        )
+
+    except Exception as e:
+        exit(f'\nEXITING: {e}')
