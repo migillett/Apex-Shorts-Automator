@@ -114,7 +114,7 @@ class ApexAutoCropper:
             final = CompositeVideoClip(comp_clip)
 
             # and export it
-            final.write_videofile(self.export_path, codec='mpeg4', audio_codec='aac', remove_temp=True, preset='placebo')
+            final.write_videofile(self.export_path, codec='libx264', audio_codec='aac', remove_temp=True, preset='slow')
 
             # close the files to clear memory
             final.close()
